@@ -1,0 +1,34 @@
+body {
+  margin: 0;
+}
+
+#scroll-text {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+#scroll-text p {
+  font-family: "Impact", sans-serif;
+  font-size: 15rem;
+  white-space: nowrap;
+  width: auto;
+  margin: 0;
+  line-height: 1;
+  animation: marquee 3s linear infinite;
+}
+
+canvas {
+  position: sticky;
+  width: 100%;
+  height: 100vh;
+}
