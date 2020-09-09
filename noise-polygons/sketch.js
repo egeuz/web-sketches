@@ -3,7 +3,7 @@ var numberOfPolygons = 80;
 
 var polygons = new Array(numberOfPolygons).fill(0).map(function (polygon, index) {
   return Path.RegularPolygon({
-    sides: 12,
+    sides: 8,
     radius: randomFloat(50, 250),
     center: [view.center.x, view.center.y - (numberOfPolygons / 2 * 5) + (index * 5)],
     // center: view.center,
@@ -20,7 +20,7 @@ var polygons = new Array(numberOfPolygons).fill(0).map(function (polygon, index)
 
 //additional setup for polygons
 polygons.forEach(function(polygon) {
-  polygon.smooth({type: "continuous"});
+  // polygon.smooth({type: "continuous"});
 })
 
 
