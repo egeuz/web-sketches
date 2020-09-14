@@ -1,38 +1,3 @@
-/*** INIT ***/
-var mouse = view.center;
-var boidCount = 150;
-var boidRadius = 25;
-var boids = createFlock(boidCount);
-var deltaTime = 0;
-noise.seed(Math.random());
-
-
-function createFlock(amount) {
-  var boids = [];
-
-  for (var i = 0; i < amount; i++) {
-    boids.push(new Boid(new Point(
-      Math.random() * view.size.width,
-      Math.random() * view.size.height
-    ), boidRadius));
-  }
-  return boids;
-}
-
-/*** RUNTIME ***/
-function onFrame(event) {
-  boids.forEach(function (boid) {
-    boid.run(boids);
-    var red = remap(boid.path.position.x, 0, view.size.width, 0, 1);
-    var blue = remap(boid.path.position.y, 0, view.size.height, 0, 1);
-    boid.path.fillColor = new Color(red, 0.7, blue);
-  })
-}
-
-function onMouseMove(event) {
-  mouse = event.point;
-}
-
 
 /*** BOID CLASS ***/
 function Boid(position, radius) {
@@ -44,18 +9,14 @@ function Boid(position, radius) {
       [position.x, position.y - radius * 1.5],
       [position.x + radius / 2, position.y - radius],
     ],
-    fillColor: {
-      hue: Math.random() * 200,
-      saturation: 50,
-      brightness: 10
-    },
+    fillColor: "#fafafa",
     applyMatrix: false,
   })
 
   /* physics properties */
   this.radius = radius;
   this.maxSpeed = 10;
-  this.maxForce = 0.3;
+  this.maxForce = 2;
   this.velocity = Point.random();
   this.acceleration = new Point();
 
@@ -73,6 +34,7 @@ function Boid(position, radius) {
     this.velocity.length = Math.min(this.maxSpeed, this.velocity.length);
     //Rotate the boid
     var delta = this.path.position - (this.path.position + this.velocity);
+    // console.log(this.path.rotation);
     this.path.rotation = (delta.angle + 90);
     //Move the boid
     this.path.position += this.velocity;
@@ -82,11 +44,11 @@ function Boid(position, radius) {
 
   /* autonomous agent functions */
   this.flock = function (boids) {
-    var separation = this.separate(4, boids);
-    var alignment = this.align(2, boids);
-    var cohesion = this.cohesion(2, boids);
-    var seek = this.seek(mouse);
-    this.acceleration += separation + alignment + cohesion + seek;
+    var separation = this.separate(2, boids);
+    var alignment = this.align(1, boids);
+    var cohesion = this.cohesion(1, boids);
+    // var seek = this.seek(mouse) * 2;
+    this.acceleration += separation + alignment + cohesion;
   }
 
   //SEEK
@@ -219,9 +181,4 @@ function Boid(position, radius) {
       this.path.position += vector;
     }
   }
-}
-
-/* HELPER METHODS */
-function remap(value, low1, high1, low2, high2) {
-  return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
