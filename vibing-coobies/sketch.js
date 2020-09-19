@@ -1,12 +1,13 @@
 /*** INITIAL VARIABLES ***/
-const resolution = 20;
-const rows = 40;
-const columns = 40;
+const resolution = 8;
+const rows = 100;
+const columns = 100;
 let isometricAngle = 4;
 const x = window.innerWidth / 2;
 const y = window.innerHeight / 2;
 let grid;
 let cluster;
+let time = 0;
 
 /*** RUNTIME ***/
 function setup() {
@@ -28,12 +29,19 @@ function setup() {
 
 function draw() {
   background("#050505");
-  grid.render();
   noStroke();
-
   cluster.render();
   cluster.animate();
 
+  var n = noise(time);
+  n = (n > 0.5) ? 0.05 : -0.05;
+  isometricAngle += n;
+  if (isometricAngle < 2.5) isometricAngle = 2.5 + Math.random() * 0.05;
+  if (isometricAngle > 6) isometricAngle = 6 + Math.random() * 0.05;
+  console.log(isometricAngle);
+  grid.setIsometricAngle(isometricAngle);
+
+  time += 0.05;
 }
 
 function mouseWheel(event) {
@@ -47,6 +55,7 @@ function mouseWheel(event) {
     if (isometricAngle < 2) isometricAngle = 2;
     grid.setIsometricAngle(isometricAngle);
   }
+  // grid.render();
 
   noStroke();
   cluster.render();
@@ -85,7 +94,7 @@ class CubeCluster {
           width,
           depth,
           height,
-          baseColor: { hue: random(80, 100), saturation: 60 - x * 0.3, brightness: 70 + x * 0.5 },
+          baseColor: { hue: random(80, 100), saturation: 60 - x * 0.1 - y * 0.1, brightness: 55 + x * 0.3 + y * 0.3 },
         })
   
         column.push(block);
@@ -132,7 +141,7 @@ class RectPrism {
     let bri = baseColor.brightness;
     this.baseColor = color(hue, sat, bri);
     this.highlight = color(hue, sat - 10, bri + 10);
-    this.shadow = color(hue, sat + 5, bri - 5);
+    this.shadow = color(hue, sat, bri);
     this.outlineColor = color;
   }
 
@@ -150,7 +159,6 @@ class RectPrism {
     this.drawPlane(t1, t2, t3, t4); //draw top plane
     fill(this.baseColor);
     this.drawPlane(t4, t3, b3, b4); //draw left side plane
-    
     fill(this.highlight);
     this.drawPlane(t3, t2, b2, b3); //draw right side plane
   }
@@ -209,7 +217,6 @@ class Grid {
         let s = 60 - x * 0.3;
         let b = 70 + x * 0.5;
         stroke(h, s, b);
-        strokeWeight(x * 0.075 + y * 0.075);
         const p = this.points[x][y];
         point(p.x, p.y);
       }
@@ -221,7 +228,7 @@ class Grid {
     let newY = this.y - this.rows / this.isometricAngle * this.res;
     this.origin = createVector(this.origin.x, newY);
     this.init();
-    this.render();
+    // this.render();
   }
 
   createIsometricPoint(x, y) {
