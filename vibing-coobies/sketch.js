@@ -2,47 +2,43 @@
 const resolution = 20;
 const rows = 40;
 const columns = 40;
-let isometricAngle = 3;
+let isometricAngle = 4;
 const x = window.innerWidth / 2;
 const y = window.innerHeight / 2;
 let grid;
-let skylines;
+let cluster;
 
 /*** RUNTIME ***/
 function setup() {
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 100);
-  frameRate(10);
+  frameRate(12);
 
-  //initialize and render the grid;
   grid = new Grid({
     x, y, columns, rows, resolution, isometricAngle
   })
   grid.init();
   grid.render();
 
-  skylines = generateSkyline(10, 10);
+  // skylines = generateSkyline(10, 10);
+  cluster = new CubeCluster(10, 10, grid);
+  cluster.init();
+  console.log(cluster.blocks);
 }
 
 function draw() {
-  background(0);
+  background("#050505");
   grid.render();
   noStroke();
 
-  skylines.forEach(skyline => {
-    skyline.forEach(building => {
-      let height = Math.max(Math.floor(random(3, 10)), Math.floor(random(3, 10)));
-      building.h = height;
-      building.render();
-    })
-  })
-  renderSkyline();
+  cluster.render();
+  cluster.animate();
+
 }
 
 function mouseWheel(event) {
-  renderSkyline();
-
   clear();
+  
   if (event.delta > 0) {
     isometricAngle += 0.1;
     grid.setIsometricAngle(isometricAngle);
@@ -51,47 +47,73 @@ function mouseWheel(event) {
     if (isometricAngle < 2) isometricAngle = 2;
     grid.setIsometricAngle(isometricAngle);
   }
+
+  noStroke();
+  cluster.render();
+
+  
 }
 
-function generateSkyline(startx, starty) {
-  let columns = [];
-  //making the weirdest loop i'll make in my life, so skippy.
-  for (let x = startx; x < grid.cols - 4; x++) {
-    let skyline = [];
-    let width = Math.max(Math.floor(random(3, 5)), Math.floor(random(3, 5)));
-    if (width > grid.cols - x)
-      width = grid.cols - x
-
-    for (let y = starty; y < grid.rows - 4; y++) {
-      let depth = Math.max(Math.floor(random(3, 4)), Math.floor(random(3, 4)));
-      if (depth > grid.rows - y)
-        depth = grid.rows - y;
-      let height = Math.max(Math.floor(random(3, 10)), Math.floor(random(3, 10)));
-
-      let building = new RectPrism({
-        point: createVector(x, y),
-        width,
-        depth,
-        height,
-        baseColor: { hue: random(90, 100), saturation: 60, brightness: 70 },
-      })
-
-      skyline.push(building);
-      y += depth;
-    }
-
-    columns.push(skyline);
-    x += width;
+class CubeCluster {
+  constructor(x, y, grid) {
+    this.grid = grid;
+    this.blocks = [];
+    this.x = x;
+    this.y = y;
   }
-  return columns;
-}
 
-function renderSkyline() {
-  skylines.forEach((skyline, index) => {
-    skyline.forEach(building => {
-      building.render();
+  init() {
+    let startx = this.x;
+    let starty = this.y;
+    let grid = this.grid;
+    let blocks = [];
+    //making the weirdest loop i'll make in my life, so skippy.
+    for (let x = startx; x < grid.cols - 4; x++) {
+      let column = [];
+      let width = randomHighBias(1, 3);
+      if (width > grid.cols - x)
+        width = grid.cols - x
+  
+      for (let y = starty; y < grid.rows - 4; y++) {
+        let depth = randomHighBias(3, 4);
+        if (depth > grid.rows - y)
+          depth = grid.rows - y;
+        let height = randomHighBias(3, 10);
+  
+        let block = new RectPrism({
+          point: createVector(x, y),
+          width,
+          depth,
+          height,
+          baseColor: { hue: random(80, 100), saturation: 60 - x * 0.3, brightness: 70 + x * 0.5 },
+        })
+  
+        column.push(block);
+        y += depth;
+      }
+  
+      blocks.push(column);
+      x += width;
+    }
+    this.blocks = blocks;
+  }
+
+  render() {
+    this.blocks.forEach(column => {
+      column.forEach(block => {
+        block.render();
+      })
     })
-  })
+  }
+
+  animate() {
+    this.blocks.forEach(column => {
+      column.forEach(block => {
+        let height = randomHighBias(3, 10);
+        block.h = height;
+      })
+    })
+  }
 }
 
 /*** CLASSES ***/
@@ -105,13 +127,12 @@ class RectPrism {
     this.d = depth;
     this.h = height;
 
-    /* future coloring properties */
     let hue = baseColor.hue;
     let sat = baseColor.saturation;
     let bri = baseColor.brightness;
     this.baseColor = color(hue, sat, bri);
     this.highlight = color(hue, sat - 10, bri + 10);
-    this.shadow = color(hue, sat + 10, bri - 15);
+    this.shadow = color(hue, sat + 5, bri - 5);
     this.outlineColor = color;
   }
 
@@ -125,17 +146,16 @@ class RectPrism {
     );
 
     //draw prism planes
-    fill(this.baseColor);
-    this.drawPlane(t1, t2, t3, t4); //draw top plane
-    fill(this.highlight);
-    this.drawPlane(t4, t3, b3, b4); //draw left side plane
     fill(this.shadow);
+    this.drawPlane(t1, t2, t3, t4); //draw top plane
+    fill(this.baseColor);
+    this.drawPlane(t4, t3, b3, b4); //draw left side plane
+    
+    fill(this.highlight);
     this.drawPlane(t3, t2, b2, b3); //draw right side plane
   }
 
   getPlanePoints(x, y, w, d) {
-    // console.log(x);
-    // console.log(this.grid[x][y]);
     return [
       this.grid[x][y],
       this.grid[x + w][y],
@@ -152,8 +172,6 @@ class RectPrism {
     vertex(p4.x, p4.y)
     endShape()
   }
-
-
 }
 
 
@@ -184,9 +202,13 @@ class Grid {
   }
 
   render() {
+    
     for (let x = 0; x < this.cols; x++) {
       for (let y = 0; y < this.rows; y++) {
-        stroke(30, 60, 70);
+        let h = random(80, 100);
+        let s = 60 - x * 0.3;
+        let b = 70 + x * 0.5;
+        stroke(h, s, b);
         strokeWeight(x * 0.075 + y * 0.075);
         const p = this.points[x][y];
         point(p.x, p.y);
@@ -213,4 +235,9 @@ class Grid {
     let ypos = y * this.res + this.origin.y;
     return createVector(xpos, ypos);
   }
+}
+
+/*** RANDOM METHODS ***/
+function randomHighBias(min, max) {
+  return Math.floor(Math.max(random(min, max), random(min, max)))
 }
