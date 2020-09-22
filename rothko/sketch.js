@@ -2,18 +2,18 @@ function setup() {
   createCanvas(windowWidth * 3, windowHeight);
   colorMode(HSB, 1);
   background(0, 0, 0.08);
-  generateGallery(80, 50);
+  generateGallery(50, 50);
 }
 
 function windowResized() {
   resizeCanvas(windowWidth * 3, windowHeight);
-  generateGallery(80, 50);
+  generateGallery(50, 50);
 }
 
 
 function generateGallery(x, y) {
 
-  let gap = x / 2;
+  let gap = x;
   let maxWidth = width - x;
   let i = 0;
 
@@ -76,8 +76,8 @@ function drawBlock(x, y, width, height, baseColor) {
     let variance = 10;
     let randomLineWidth = Math.floor(random(width - variance, width));
     let offset = (randomLineWidth - width) / 2;
-    let lean = random(-2, 2);
-    stroke(hue, saturation, brightness, random(0.5, 1));
+    let lean = random(-4, 4);
+    stroke(hue, saturation, brightness * random(0.6, 0.7), random(0.3, 0.4));
     strokeWeight(random(0.5, 3));
     line(x + offset, j, x + width - offset, j + lean);
   }
@@ -86,8 +86,8 @@ function drawBlock(x, y, width, height, baseColor) {
     let variance = 20;
     let randomlineHeight = Math.floor(random(height - variance, height));
     let offset = (randomlineHeight - height) / 2;
-    let lean = random(-2, 2);
-    stroke(hue, saturation, brightness, random(0.5, 1));
+    let lean = random(-4, 4);
+    stroke(hue, saturation, brightness * random(0.6, 0.7), random(0.3, 0.4));
     strokeWeight(random(0.5, 3));
     line(i, y + offset, i + lean, y + height - offset);
   }
