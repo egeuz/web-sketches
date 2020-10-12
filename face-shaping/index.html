@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Shaping</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="grid">
+      <canvas id="canvas" resize></canvas>
+      <div id="controls">
+        <button id="download">download</button>
+        <input type="color" name="background-slider" id="background-slider" value="#C779D0">
+        <p id="instructions">
+          left click + drag to alter the shapes. right click + drag to move
+          them.
+        </p>
+      </div>
+    </div>
+    <script src="../libraries/paper-full.min.js"></script>
+    <script type="text/paperscript" src="sketch.js" canvas="canvas"></script>
+  </body>
+</html>
