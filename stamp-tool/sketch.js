@@ -55,6 +55,11 @@ function setupFileInterface() {
   let span = createSpan("For best results, upload a 800 x 800 PNG")
   input.parent("controls-ul")
   span.parent("controls-ul")
+  document
+    .getElementById("image-download")
+    .addEventListener("click", e => {
+      save("from-ege-with-love.jpg")
+    })
 }
 
 function handleFileUpload(file) {
