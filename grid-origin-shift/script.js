@@ -1,5 +1,5 @@
 let pg;
-let res = 40;
+let res = 150;
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
@@ -17,7 +17,7 @@ function draw() {
   background('#F9F5EB')
   noStroke()
 
-  pg.render(coordinateCircles)
+  pg.render(coordinateCell)
   pg.update()
 }
 
