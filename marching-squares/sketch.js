@@ -114,11 +114,7 @@ class MarchingSquares {
   renderLines() {
     for (let x = 0; x < this.columns - 1; x++) {
       for (let y = 0; y < this.rows - 1; y++) {
-
-        const corners = this.getCornerValues(x, y);
-        const [p, q, r, s] = this.getCornerPoints(x, y);
         const [a, b, c, d] = this.getIsolinePoints(x, y);
-        // const [a, b, c, d] = this.getWeightedIsolinePoints(x, y, corners);
         const state = this.getSquareState(x, y);
 
         stroke(this.strokeColor);

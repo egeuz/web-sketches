@@ -30,7 +30,6 @@ function draw() {
       let y = mouseY - stampRadius
 
       if (keyIsDown(ALT)) {
-        console.log("hi")
         stamp = get(x, y, stampRadius * 2, stampRadius * 2)
       } else if (!stamp) {
         return;
