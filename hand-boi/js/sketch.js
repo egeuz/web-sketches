@@ -161,7 +161,7 @@ files.forEach(function (filename) {
     })
 
     part.position = [xpos, ypos]
-    part.remove()
+    // part.remove()
 
     hand.components.push(part)
   })
