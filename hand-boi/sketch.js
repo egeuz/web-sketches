@@ -1,104 +1,53 @@
-const files = [
-  "thumb-open.svg",
-  "palm.svg",
-  // "pinky-closed.svg",
-  // "ring-closed.svg",
-  // "middle-closed.svg",
-  // "index-closed.svg",
-  // "thumb-closed.svg",
-  // "pinky-open.svg",
-  // "ring-open.svg",
-  // "middle-open.svg",
-  // "index-open.svg",
-];
+hands = [];
 
-const hand = {
-  update: update,
+var arm = {
+  hand: ""
 }
 
-function update() {
-  for (let i = 0; i < 5; i++) {
+for (var i = 1; i <= 32; i++) {
+  project.importSVG('./assets/hardcopy/' + i + '.svg', function (svg) {
+    svg.position = [view.size.width / 2, view.size.height / 2]
+    hands.push(svg)
+    svg.remove()
+    renderHand()
+  })
+}
 
+function onMouseDown() {
+  if (hands.length === 32) {
+    var fingerConfig = getRandomFingers()
+    hands.forEach(function(hand) { hand.remove() })
+    hands[fingerConfig].addTo(project)
+
+    // console.log(fingerConfig)
+    // arm.hand.position = [view.size.width / 2, view.size.height / 2]
   }
 }
 
-window.addEventListener("DOMContentLoaded", async () => {
-  paper.setup(document.getElementById("canvas"))
-  
-  const handParts =  importAssets(files)
-
-})
-
- function importAssets(files) {
-  const handParts = []
-  const importSVG = promisify(paper.project.importSVG)
-
-  // files.forEach(function (filename) {
-  //   var url = './assets/' + filename;
-  //   project.importSVG(url, function (svg) {
-  //     var xpos = view.size.width / 2;
-  //     var ypos = view.size.height / 2;
-
-
-  //     if (filename === "thumb-open.svg") {
-  //       // svg.opacity = 0.5;
-  //       xpos -= 82;
-  //       ypos += 20;
-  //     }
-
-  //     if (filename === "index-open.svg") {
-  //       xpos -= 62;
-  //       ypos -= 75;
-  //     }
-
-  //     if (filename === "middle-open.svg") {
-  //       xpos -= 28;
-  //       ypos -= 101;
-  //     }
-
-  //     if (filename === "ring-open.svg") {
-  //       xpos += 15;
-  //       ypos -= 90;
-  //     }
-
-  //     if (filename === "pinky-open.svg") {
-  //       xpos += 55;
-  //       ypos -= 60;
-  //     }
-
-  //     if (filename === "thumb-closed.svg") {
-  //       // svg.opacity = 0.5;
-  //       xpos -= 72;
-  //       ypos += 10;
-  //     }
-
-  //     if (filename === "index-closed.svg") {
-  //       xpos -= 50;
-  //       ypos -= 48;
-  //     }
-
-  //     if (filename === "middle-closed.svg") {
-  //       xpos -= 15;
-  //       ypos -= 50;
-  //     }
-
-  //     if (filename === "ring-closed.svg") {
-  //       xpos += 20;
-  //       ypos -= 48;
-  //     }
-
-  //     if (filename === "pinky-closed.svg") {
-  //       xpos += 55;
-  //       ypos -= 46;
-  //     }
-
-  //     //adjust positions
-  //     svg.children[0].remove();
-  //     svg.name = filename.replace(".svg", "")
-  //     svg.position = new Point(xpos, ypos)
-  //     handParts.push(svg);
-  //   })
-  //   // var unite = handParts[1].unite(handParts[0])
-  // })
+function renderHand() {
+  if (hands.length === 32) {
+    var fingerConfig = getRandomFingers()
+    hands.forEach(function(hand) { hand.remove() })
+    hands[fingerConfig].addTo(project)
+  }
 }
 
+
+//TRY ANOTHER PROGRAMMATIC APPROACH LATER
+
+// project.importSVG('./assets/hand.svg', function(svg) {
+//   console.log("hii")
+//   console.log(svg)
+//   svg.remove()
+// })
+
+function getRandomFingers() {
+  return new Array(5)
+    .fill(0)
+    .map(function (_n, i) {
+      return Math.random() > 0.5 ? Math.pow(2, i) : 0
+    })
+    .reduce(function (acc, val) {
+      return acc + val
+    })
+}
