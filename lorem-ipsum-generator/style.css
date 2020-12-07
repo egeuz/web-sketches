@@ -1,0 +1,48 @@
+body {
+  height: 100vh;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  background: #111;
+}
+
+#app {
+  width: 100%;
+  max-width: 450px;
+  padding: 50px 20px;
+  /* min-height: 200px; */
+  border: 2px solid #00ffaa;
+  background: #000;
+  border-radius: 20px;
+}
+
+p {
+  margin: 0 auto 40px;
+  text-align: center;
+  color: #00ffaa;
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+button {
+  display: block;
+  width: 50%;
+  max-width: 160px;
+  height: 40px;
+  border: 2px solid #111;
+  background: #00ffaa;
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 auto;
+}
+
+button:hover {
+  background: #00dd99;
+}
+
+button:active {
+  background: #ff00aa;
+  color: #fff;
+}
